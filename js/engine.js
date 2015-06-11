@@ -13,12 +13,23 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
+ //global variable to set the player's level
+var gameLevel=0;
+/* called from HTML when the user choses the level, set the player's level*/
+function setLevel(){
+        var selector=document.getElementById('levelSelect')
+        gameLevel=parseInt(selector.value);
+        player.setLevel(gameLevel);
+        //console.log("setLevel:level=" + gameLevel);
+    }
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
      */
+     //isCollision is a boolean, stating if collision occured or not.
+     //hasScored is a boolean, stating if the player made it to other side.
     var doc = global.document,
         win = global.window,
         canvas = doc.createElement('canvas'),
@@ -29,6 +40,7 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
+   
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -47,9 +59,13 @@ var Engine = (function(global) {
          */
         update(dt);
         render();
-        if (isCollision === true || hasScored)
+        /*if collided with enemy or crossed safely(hasScored),display score and exit*/
+        if (isCollision || hasScored){
+            var score=doc.getElementById('score');
+            console.log("game End: player.score" + player.score);
+            score.value=player.score;
             return;
-
+        }
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
          */
@@ -60,13 +76,15 @@ var Engine = (function(global) {
          */
         win.requestAnimationFrame(main);
     };
-
+    
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
      * game loop.
      */
     function init() {
         reset();
+        //one time creation of  enemies and player objects.
+        entitiesInit(gameLevel);
         lastTime = Date.now();
         main();
     }
@@ -96,22 +114,30 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+       
+       //detect if the player collided with enemy
         collisionDetect();
+        //if not collision, check if player won(crossed over safely)
         if (!isCollision)
             hasScored=scoreDetect();
     }
     
+    //check if the player corssed over safely(won) and update the scores based on the level
+    //levels are used  for computing the scores and increase the challenge level to cross the stone rows.
     function scoreDetect(){
         if (player.y === 0){
             player.update(0);
             return true;
         }
     }
+    /* function to detect if the enemy and player collided.
+     * Goes thro every enemy in the allEnemies array and checks if the player's co-ordinates match with the enemy .
+     * i,e check if the enemy.x is in the range of the player and player +100(player's frameWidth) and has the same y coordinate as player
+     */
     function collisionDetect(){
-        console.log("CollisionDetect: player.x=" + player.x + " player.y= " + player.y);
+        //console.log("CollisionDetect: player.x=" + player.x + " player.y= " + player.y);
         allEnemies.forEach(function(enemy) {
-            console.log("CollisionDetect:enemy.x=" + Math.floor(enemy.x) + " enemy.y= " + Math.floor(enemy.y) );
+            //console.log("CollisionDetect:enemy.x=" + Math.floor(enemy.x) + " enemy.y= " + Math.floor(enemy.y) );
             if ( (Math.floor(enemy.x) > player.x ) && (Math.floor(enemy.x) < player.x +100) && (player.y === Math.floor(enemy.y) )){
                 console.log("CollisionDetect:DETECTED!!!" );
                 isCollision=true;
@@ -159,7 +185,9 @@ var Engine = (function(global) {
             }
         }
 
-        console.log("render:isCollision=" +isCollision);
+        //console.log("render:isCollision=" +isCollision);
+        //if collision detected, draw gameOver in the canvas
+        //if hasScored(reached the other side safely),draw you win image.
         if (isCollision){
             console.log("drawing gameOver");
             ctx.drawImage(Resources.get('images/gameOver.jpg'),160,240,184,123);

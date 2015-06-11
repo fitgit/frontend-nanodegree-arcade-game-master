@@ -6,8 +6,23 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
+    <div>
+		<br>
+		<select id="levelSelect" onchange="setLevel()">
+  			<option value="" disabled selected style="display:none;">Level</option>
+  			<option value="0">1</option>
+  			<option value="1">2</option>
+  			<option value="2">3</option>
+		</select>
+	</div>
+	<div>
+		<br>
+		Score: <input type="text" id="score" name="score"><br>
+	</div>
+
 </body>
 </html>
