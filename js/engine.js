@@ -13,17 +13,19 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
- //global variable to set the player's level
+ /* global variable to set the player's level */
+ 
 var gameLevel=0;
 /* called from HTML when the user choses the level, set the player's level*/
 function setLevel(){
-        var selector=document.getElementById('levelSelect')
+        "use strict";
+        var selector=document.getElementById('levelSelect');
         gameLevel=parseInt(selector.value);
         player.setLevel(gameLevel);
-        //console.log("setLevel:level=" + gameLevel);
     }
 
 var Engine = (function(global) {
+    "use strict";
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
@@ -39,8 +41,6 @@ var Engine = (function(global) {
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
-
-   
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -75,8 +75,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
-    
+    }
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
      * game loop.
@@ -98,11 +97,9 @@ var Engine = (function(global) {
      * functionality this way (you could just implement collision detection
      * on the entities themselves within your app.js file).
      */
-    function update(dt) {
-        updateEntities(dt);
-        
+    function update(dt){
+        updateEntities(dt); 
     }
-
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
      * their update() methods. It will then call the update function for your
@@ -114,14 +111,13 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-       
-       //detect if the player collided with enemy
+        /* detect if the player collided with enemy*/
         collisionDetect();
-        //if not collision, check if player won(crossed over safely)
-        if (!isCollision)
+        /* if not collision, check if player won(crossed over safely)*/
+        if (!isCollision){
             hasScored=scoreDetect();
+        }
     }
-    
     //check if the player corssed over safely(won) and update the scores based on the level
     //levels are used  for computing the scores and increase the challenge level to cross the stone rows.
     function scoreDetect(){
@@ -142,10 +138,9 @@ var Engine = (function(global) {
                 console.log("CollisionDetect:DETECTED!!!" );
                 isCollision=true;
                 return;
-            }    
+            }
         });
     }
-
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
      * game tick (or loop of the game engine) because that's how games work -
@@ -184,18 +179,18 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
         //console.log("render:isCollision=" +isCollision);
         //if collision detected, draw gameOver in the canvas
         //if hasScored(reached the other side safely),draw you win image.
         if (isCollision){
             console.log("drawing gameOver");
             ctx.drawImage(Resources.get('images/gameOver.jpg'),160,240,184,123);
-         } else if (hasScored){
+        } else if (hasScored){
             console.log("drawing You scored!!");
             ctx.drawImage(Resources.get('images/youWin.jpg'),0,240,500,100);
-         } else
+        } else {
             renderEntities();
+        }
     }
 
     /* This function is called by the render function and is called on each game

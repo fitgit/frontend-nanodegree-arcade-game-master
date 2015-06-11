@@ -4,9 +4,10 @@
  * a simple "caching" layer so it will reuse cached images if you attempt
  * to load the same image multiple times.
  */
+ 
 (function() {
+    "use strict";
     var resourceCache = {};
-    var loading = [];
     var readyCallbacks = [];
 
     /* This is the publicly accessible image loading function. It accepts
@@ -41,7 +42,8 @@
              * re-loading the image.
              */
             return resourceCache[url];
-        } else {
+        } else 
+        {
             /* This URL has not been previously loaded and is not present
              * within our cache; we'll need to load this image.
              */
