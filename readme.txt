@@ -7,6 +7,9 @@ Engine.js: The main Engine which has the event loop to update the positions and 
 
 Resource.js: A function to load all the images needed for the project and cache them for quicker access.
 
+Project has 1 Html file
+index.html: This file has a dropdown menu to set level, displays the score at the end of the game and loads the above javascript files.
+
 How to Play
 
 1. To run the game, click on index.html
